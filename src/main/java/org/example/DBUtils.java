@@ -16,7 +16,9 @@ public class DBUtils {
             connection = DriverManager.getConnection(connectionURL, userName, password);
 
         } catch (SQLException e) {
+            
             throw new ServiceException(e.getMessage(), e);
+
         }
         return connection;
     }
