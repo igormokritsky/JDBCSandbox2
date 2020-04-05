@@ -1,7 +1,10 @@
-package org.example.userdao;
+package org.example.mysql.impl;
 
 
-import org.example.JDBCUtils;
+import org.example.DBUtils;
+import org.example.ServiceException;
+import org.example.dao.UsersDao;
+import org.example.entity.User;
 
 import java.sql.*;
 import java.sql.SQLException;
@@ -14,7 +17,7 @@ public class UserDaoImpl implements UsersDao {
     }
 
     public User getUser(int id) {
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             Statement statement = connection.createStatement()){
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM users WHERE id=" + id);
@@ -28,7 +31,7 @@ public class UserDaoImpl implements UsersDao {
                 return user;
             }
         }catch (SQLException e) {
-            JDBCUtils.printSQLException(e);
+            throw new ServiceException(e.getMessage(), e);
         }
         return null;
     }
@@ -39,7 +42,7 @@ public class UserDaoImpl implements UsersDao {
 
         String insert = "INSERT INTO swimmers" + "(id, username, email, phone, password) VALUES" +
                 "(?,?,?,?,?);";
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(insert);){
             connection.setAutoCommit(false);
 
@@ -51,8 +54,8 @@ public class UserDaoImpl implements UsersDao {
             connection.commit();
 
 
-        }catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
         return false;
     }
@@ -62,7 +65,7 @@ public class UserDaoImpl implements UsersDao {
     public boolean updateUser(User user) {
         String update = "UPDATE swimmers SET username=?, email=?, phone=?, password=? WHERE id=?";
 
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(update)){
             preparedStatement.setString(1,user.getUsername());
             preparedStatement.setString(2,user.getEmail());
@@ -75,8 +78,8 @@ public class UserDaoImpl implements UsersDao {
                 return true;
             }
 
-        }catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
         return false;
     }
@@ -84,15 +87,15 @@ public class UserDaoImpl implements UsersDao {
 
 
     public boolean deleteUser(int id){
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             Statement statement = connection.createStatement()){
             int i = statement.executeUpdate("DELETE FROM users WHERE id=" + id);
 
             if (i == 1){
                 return true;
             }
-        }catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
 
         return false;

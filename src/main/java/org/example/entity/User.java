@@ -1,4 +1,4 @@
-package org.example.userdao;
+package org.example.entity;
 
 public class User {
     private Integer id;

@@ -1,7 +1,10 @@
-package org.example.coachdao;
+package org.example.mysql.impl;
 
 
-import org.example.JDBCUtils;
+import org.example.DBUtils;
+import org.example.ServiceException;
+import org.example.entity.Coach;
+import org.example.dao.CoachesDao;
 
 import java.sql.*;
 import java.sql.SQLException;
@@ -18,7 +21,7 @@ public class CoachDaoImpl implements CoachesDao {
 
     public Coach getCoach(int id){
 
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             Statement statement = connection.createStatement()){
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM coaches WHERE id=" + id);
@@ -32,7 +35,7 @@ public class CoachDaoImpl implements CoachesDao {
             }
 
         } catch (SQLException e) {
-            JDBCUtils.printSQLException(e);
+            throw new ServiceException(e.getMessage(), e);
         }
         return null;
     }
@@ -41,8 +44,8 @@ public class CoachDaoImpl implements CoachesDao {
     public boolean insertCoach(Coach coach){
         String insert = "INSERT INTO coaches" + "(id, name, awards, country_id, user_id) VALUES" +
                 "(?,?,?,?,?);";
-        try(Connection connection = JDBCUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        try(Connection connection = DBUtils.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1,coach.getId());
@@ -53,8 +56,8 @@ public class CoachDaoImpl implements CoachesDao {
             preparedStatement.executeUpdate();
             connection.commit();
 
-        } catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        } catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
         return false;
     }
@@ -62,7 +65,7 @@ public class CoachDaoImpl implements CoachesDao {
 
     public boolean updateCoach(Coach coach){
         String update = "UPDATE coaches SET name=?, awards=? WHERE id=?";
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(update)){
             preparedStatement.setString(1, coach.getName());
             preparedStatement.setString(2,coach.getAwards());
@@ -72,23 +75,23 @@ public class CoachDaoImpl implements CoachesDao {
                 return true;
             }
 
-        }catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
         return false;
     }
 
     public boolean deleteCoach(int id) {
 
-        try(Connection connection = JDBCUtils.getConnection();
+        try(Connection connection = DBUtils.getConnection();
             Statement statement = connection.createStatement()){
             int i = statement.executeUpdate("DELETE FROM coaches WHERE id=" + id);
 
             if (i == 1){
                 return true;
             }
-        }catch (SQLException e){
-            JDBCUtils.printSQLException(e);
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
         }
 
         return false;

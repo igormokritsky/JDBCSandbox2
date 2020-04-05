@@ -1,4 +1,4 @@
-package org.example.coachdao;
+package org.example.entity;
 
 public class Coach {
     private Integer id;

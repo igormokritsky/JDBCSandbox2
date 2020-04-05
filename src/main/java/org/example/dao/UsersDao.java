@@ -1,4 +1,6 @@
-package org.example.userdao;
+package org.example.dao;
+
+import org.example.entity.User;
 
 public interface UsersDao {
     User getUser(int id);

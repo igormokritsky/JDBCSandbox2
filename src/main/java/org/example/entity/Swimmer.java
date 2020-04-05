@@ -1,4 +1,4 @@
-package org.example.swimmerdao;
+package org.example.entity;
 
 public class Swimmer {
     private Integer id;

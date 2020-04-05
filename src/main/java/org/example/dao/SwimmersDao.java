@@ -1,6 +1,6 @@
-package org.example.swimmerdao;
+package org.example.dao;
 
-import org.example.coachdao.Coach;
+import org.example.entity.Swimmer;
 
 public interface SwimmersDao {
 

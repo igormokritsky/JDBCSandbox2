@@ -1,7 +1,7 @@
-package org.example.coachdao;
+package org.example.dao;
 
 
-import org.example.coachdao.Coach;
+import org.example.entity.Coach;
 
 public interface CoachesDao {
     Coach getCoach(int id);
