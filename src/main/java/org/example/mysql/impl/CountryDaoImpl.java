@@ -17,9 +17,12 @@ public class CountryDaoImpl implements CountriesDao {
     }
 
     public Country getCountry(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM countries WHERE id=" + id);
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM countries WHERE id=" + id);
             connection.setAutoCommit(false);
             if(resultSet.next()){
                 Country country = new Country();
@@ -28,16 +31,20 @@ public class CountryDaoImpl implements CountriesDao {
                 return country;
             }
             connection.commit();
-
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
+            DBUtils.closeResultSet(resultSet);
         }
         return null;
     }
 
     public boolean insertCountry(Country country) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(insert);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1,country.getId());
@@ -47,13 +54,17 @@ public class CountryDaoImpl implements CountriesDao {
 
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean updateCountry(Country country) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(update)){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
             preparedStatement.setString(1,country.getCountry_name());
@@ -66,13 +77,17 @@ public class CountryDaoImpl implements CountriesDao {
             connection.commit();
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean deleteCountry(int id){
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM countries WHERE id=" + id);
 
             if (i == 1){
@@ -80,6 +95,8 @@ public class CountryDaoImpl implements CountriesDao {
             }
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
         }
 
         return false;

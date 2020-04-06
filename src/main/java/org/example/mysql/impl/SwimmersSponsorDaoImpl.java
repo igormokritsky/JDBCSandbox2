@@ -19,9 +19,12 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
     }
 
     public SwimmersSponsor getSwimmerSponsor(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM swimmers_sponsors WHERE id=" + id);
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try{
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM swimmers_sponsors WHERE id=" + id);
             connection.setAutoCommit(false);
             if(resultSet.next()){
                 SwimmersSponsor swimmersSponsor = new SwimmersSponsor();
@@ -33,15 +36,20 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
 
             connection.commit();
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
+            DBUtils.closeResultSet(resultSet);
         }
         return null;
     }
 
     public boolean insertSwimmerSponsor(SwimmersSponsor swimmersSponsor) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(insert);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1, swimmersSponsor.getId());
@@ -52,14 +60,18 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
             connection.commit();
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
 
     public boolean updateSwimmerSponsor(SwimmersSponsor swimmersSponsor) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(update)){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1, swimmersSponsor.getSwimmer_id());
@@ -72,23 +84,29 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
                 return true;
             }
             connection.commit();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
 
     public boolean deleteSwimmerSponsor(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM swimmers_sponsors WHERE id=" + id);
 
             if (i == 1){
                 return true;
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
         }
 
         return false;

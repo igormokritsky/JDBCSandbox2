@@ -17,9 +17,12 @@ public class CompetitonDaoImpl implements CompetitionsDao {
     }
 
     public Competition getCompetition(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM competitions WHERE id=" + id);
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM competitions WHERE id=" + id);
             connection.setAutoCommit(false);
             if(resultSet.next()){
                 Competition competition = new Competition();
@@ -30,13 +33,18 @@ public class CompetitonDaoImpl implements CompetitionsDao {
             connection.commit();
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
+            DBUtils.closeResultSet(resultSet);
         }
         return null;
     }
 
     public boolean insertCompetition(Competition competition) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(insert);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1,competition.getId());
@@ -48,13 +56,17 @@ public class CompetitonDaoImpl implements CompetitionsDao {
 
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean updateCompetition(Competition competition) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(update)){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1,competition.getCountry_id());
@@ -69,13 +81,17 @@ public class CompetitonDaoImpl implements CompetitionsDao {
             connection.commit();
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        }finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean deleteCompetition(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM competitions WHERE id=" + id);
 
             if (i == 1){
@@ -83,6 +99,8 @@ public class CompetitonDaoImpl implements CompetitionsDao {
             }
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        }finally {
+            DBUtils.closeStatement(statement);
         }
         return false;
     }

@@ -21,11 +21,12 @@ public class SwimmerDaoImpl implements SwimmersDao {
     }
 
     public Swimmer getSwimmer(int id) {
-
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
-
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM swimmers WHERE id=" + id);
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try{
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM swimmers WHERE id=" + id);
             connection.setAutoCommit(false);
             if(resultSet.next()){
                 Swimmer swimmer = new Swimmer();
@@ -41,14 +42,19 @@ public class SwimmerDaoImpl implements SwimmersDao {
 
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
+            DBUtils.closeResultSet(resultSet);
         }
         return null;
     }
 
 
     public boolean insertSwimmer(Swimmer swimmer) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(insert);
             connection.setAutoCommit(false);
             preparedStatement.setInt(1,swimmer.getId());
             preparedStatement.setString(2,swimmer.getName());
@@ -65,14 +71,17 @@ public class SwimmerDaoImpl implements SwimmersDao {
 
         } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean updateSwimmer(Swimmer swimmer) {
-
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(update)){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(update);
             preparedStatement.setString(1,swimmer.getName());
             preparedStatement.setInt(2,swimmer.getAge());
             preparedStatement.setString(3,swimmer.getSex());
@@ -86,13 +95,17 @@ public class SwimmerDaoImpl implements SwimmersDao {
 
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean deleteSwimmer(int id){
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM swimmers WHERE id=" + id);
 
             if (i == 1){
@@ -100,6 +113,8 @@ public class SwimmerDaoImpl implements SwimmersDao {
             }
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
         }
 
         return false;

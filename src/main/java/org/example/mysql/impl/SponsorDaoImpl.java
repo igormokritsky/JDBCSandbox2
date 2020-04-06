@@ -16,9 +16,12 @@ public class SponsorDaoImpl implements SponsorsDao {
     }
 
     public Sponsor getSponsor(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM sponsors WHERE id=" + id);
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try{
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM sponsors WHERE id=" + id);
             connection.setAutoCommit(false);
             if(resultSet.next()){
                 Sponsor sponsor = new Sponsor();
@@ -28,6 +31,9 @@ public class SponsorDaoImpl implements SponsorsDao {
             connection.commit();
         } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(statement);
+            DBUtils.closeResultSet(resultSet);
         }
 
         return null;
@@ -35,8 +41,10 @@ public class SponsorDaoImpl implements SponsorsDao {
 
 
     public boolean insertSponsor(Sponsor sponsor) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(insert);
             connection.setAutoCommit(false);
 
             preparedStatement.setInt(1,sponsor.getId());
@@ -46,14 +54,18 @@ public class SponsorDaoImpl implements SponsorsDao {
 
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
 
     public boolean updateSponsor(Sponsor sponsor) {
-        try(Connection connection = DBUtils.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(update)){
+        Connection connection = DBUtils.getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
             preparedStatement.setString(1,sponsor.getName());
@@ -66,13 +78,17 @@ public class SponsorDaoImpl implements SponsorsDao {
             connection.commit();
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
         }
         return false;
     }
 
     public boolean deleteSponsor(int id) {
-        try(Connection connection = DBUtils.getConnection();
-            Statement statement = connection.createStatement()){
+        Connection connection = DBUtils.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM sponsors WHERE id=" + id);
 
             if (i == 1) {
@@ -81,9 +97,8 @@ public class SponsorDaoImpl implements SponsorsDao {
         }catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
         } finally {
-
+            DBUtils.closeStatement(statement);
         }
-
         return false;
     }
 
