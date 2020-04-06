@@ -14,6 +14,7 @@ public class CoachDaoImpl implements CoachesDao {
 
     private static final String insert = "INSERT INTO coaches" + "(id, name, awards, country_id, user_id) VALUES" +
             "(?,?,?,?,?);";
+    private static final String update = "UPDATE coaches SET name=?, awards=? WHERE id=?";
 
     public static void main(String[] args) {
         CoachDaoImpl coachDao = new CoachDaoImpl();
@@ -74,7 +75,6 @@ public class CoachDaoImpl implements CoachesDao {
     public boolean updateCoach(Coach coach){
         Connection connection = DBUtils.getConnection();
         PreparedStatement preparedStatement = null;
-        String update = "UPDATE coaches SET name=?, awards=? WHERE id=?";
         try {
             preparedStatement = connection.prepareStatement(update);
             preparedStatement.setString(1, coach.getName());
