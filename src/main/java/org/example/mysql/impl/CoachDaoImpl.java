@@ -14,7 +14,7 @@ public class CoachDaoImpl implements CoachesDao {
 
     private static final String insert = "INSERT INTO coaches" + "(id, name, awards, country_id, user_id) VALUES" +
             "(?,?,?,?,?);";
-    
+
     private static final String update = "UPDATE coaches SET name=?, awards=? WHERE id=?";
 
     public static void main(String[] args) {
