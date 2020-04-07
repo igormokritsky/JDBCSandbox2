@@ -25,7 +25,7 @@ public class SwimmersSponsor {
         this.id = id;
     }
 
-    public Integer getSwimmer_id() {
+    public Swimmer getSwimmer_id() {
         return swimmer_id;
     }
 
@@ -41,7 +41,7 @@ public class SwimmersSponsor {
         this.sponsor_id = sponsor_id;
     }
 
-    public Integer getContract_amount() {
+    public Sponsor getContract_amount() {
         return contract_amount;
     }
 
