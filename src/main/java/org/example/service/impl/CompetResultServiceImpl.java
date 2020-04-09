@@ -1,50 +1,47 @@
 package org.example.service.impl;
 
 import org.example.DAOException;
-import org.example.dao.UsersDao;
-import org.example.service.UserService;
-import org.example.transaction.TransactionManager;
-import org.example.entity.User;
 import org.example.ServiceException;
+import org.example.dao.SwimCompetsDao;
+import org.example.entity.SwimCompet;
+import org.example.entity.User;
+import org.example.service.CompetResultService;
+import org.example.transaction.TransactionManager;
 import org.example.transaction.TransactionalOperation;
 
-import java.sql.SQLException;
+public class CompetResultServiceImpl implements CompetResultService {
 
-
-public class UserServiceImpl implements UserService {
-    private final UsersDao usersDao;
+    private final SwimCompetsDao swimCompetsDao;
     private final TransactionManager transactionManager;
 
-    public UserServiceImpl(UsersDao usersDao, TransactionManager transactionManager) {
-        this.usersDao = usersDao;
+    public CompetResultServiceImpl(SwimCompetsDao swimCompetsDao, TransactionManager transactionManager) {
+        this.swimCompetsDao = swimCompetsDao;
         this.transactionManager = transactionManager;
     }
 
-
     @Override
-    public User getUser(final int id) {
-        User user;
+    public SwimCompet getResult(final int id) {
+        SwimCompet swimCompet;
         try{
-            user = transactionManager.executeTransaction(new TransactionalOperation<User>() {
+            swimCompet = transactionManager.executeTransaction(new TransactionalOperation<SwimCompet>() {
                 @Override
-                public User execute() throws DAOException {
-                    return usersDao.getUser(id);
+                public SwimCompet execute() throws DAOException {
+                    return swimCompetsDao.getSwimCompet(id);
                 }
             });
-        } catch (DAOException e){
+        } catch (DAOException e) {
             throw new ServiceException(e.getMessage(), e);
         }
-
-        return user;
+        return swimCompet;
     }
 
     @Override
-    public boolean createUser(final User user){
+    public boolean createResult(final SwimCompet swimCompet) {
         try {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return usersDao.insertUser(user);
+                    return swimCompetsDao.insertSwimCompet(swimCompet);
                 }
             });
         } catch (DAOException e) {
@@ -54,20 +51,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(final int id) {
+    public boolean deleteResult(final int id) {
         try {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return usersDao.deleteUser(id);
+                    return swimCompetsDao.deleteSwimCompet(id);
                 }
             });
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage(), e);
         }
-
         return false;
     }
-
-
 }
