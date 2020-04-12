@@ -17,13 +17,18 @@ public class CoachDaoImpl implements CoachesDao {
 
     private static final String update = "UPDATE coaches SET name=?, awards=? WHERE id=?";
 
-    public static void main(String[] args) {
-        CoachDaoImpl coachDao = new CoachDaoImpl();
 
+    private Connection connection;
+
+    public CoachDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    public static void main(String[] args) {
 
     }
 
-
+@Override
     public Coach getCoach(int id){
         Connection connection = DBUtils.getConnection();
         Statement statement = null;
@@ -48,7 +53,7 @@ public class CoachDaoImpl implements CoachesDao {
         return null;
     }
 
-
+    @Override
     public boolean insertCoach(Coach coach){
         Connection connection = DBUtils.getConnection();
         PreparedStatement preparedStatement = null;
@@ -64,15 +69,15 @@ public class CoachDaoImpl implements CoachesDao {
             preparedStatement.executeUpdate();
             connection.commit();
 
-        } catch (SQLException e) {
-            throw new ServiceException(e.getMessage(), e);
-        } finally {
-            DBUtils.closeStatement(preparedStatement);
-        }
+            } catch (SQLException e) {
+                throw new ServiceException(e.getMessage(), e);
+            } finally {
+                DBUtils.closeStatement(preparedStatement);
+            }
         return false;
     }
 
-
+    @Override
     public boolean updateCoach(Coach coach){
         Connection connection = DBUtils.getConnection();
         PreparedStatement preparedStatement = null;
@@ -93,7 +98,7 @@ public class CoachDaoImpl implements CoachesDao {
         }
         return false;
     }
-
+    @Override
     public boolean deleteCoach(int id) {
         Connection connection = DBUtils.getConnection();
         Statement statement = null;

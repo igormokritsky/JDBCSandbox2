@@ -47,6 +47,9 @@ public class Coach {
         this.awards = awards;
     }
 
+    public Coach(Integer id) {
+        this.id = id;
+    }
 
     public Integer getId() {
         return id;
