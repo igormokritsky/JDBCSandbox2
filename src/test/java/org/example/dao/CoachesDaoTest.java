@@ -33,7 +33,7 @@ public class CoachesDaoTest {
 
     @After
     public void tearDown() throws Exception {
-        DBUtils.closeStatement(statement);
+
     }
 
 
