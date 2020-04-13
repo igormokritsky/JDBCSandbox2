@@ -15,7 +15,7 @@ public class ConnectionHolder {
             "jdbc:mysql://localhost:3306/swimmers_schema?useUnicode=true&serverTimezone=UTC";
 
 
-//    private static ThreadLocal<Connection> connectionHolder = new ThreadLocal<>();
+    private static ThreadLocal<Connection> connectionHolder = new ThreadLocal<>();
 
 //    public static Connection getConnection() {
 //        Connection connection = null;
@@ -24,9 +24,9 @@ public class ConnectionHolder {
 //    }
 
 
-//    public static void setConnection(Connection connection){
-//        connectionHolder.set(connection);
-//    }
+    public static void setConnection(Connection connection){
+        connectionHolder.set(connection);
+    }
 
     private static BasicDataSource basicDataSource = new BasicDataSource();
     static {
