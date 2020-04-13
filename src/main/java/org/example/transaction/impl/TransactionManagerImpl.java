@@ -1,20 +1,15 @@
 package org.example.transaction.impl;
 
-import org.example.DAOException;
-import org.example.transaction.TransactionManager;
-import org.example.transaction.TransactionalOperation;
 import org.apache.log4j.Logger;
+import org.example.DAOException;
+import org.example.ConnectionHolder;
+import org.example.DBUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import javax.sql.DataSource;
-import org.example.DBUtils;
-import org.example.ConnectionHolder;
-
 
 public class TransactionManagerImpl implements TransactionManager {
-
     private static final Logger LOG = Logger.getLogger(TransactionManagerImpl.class);
 
     private DataSource dataSource;
@@ -25,7 +20,6 @@ public class TransactionManagerImpl implements TransactionManager {
 
     @Override
     public <T> T executeTransaction(TransactionalOperation<T> operation) throws DAOException {
-
         Connection connection;
         try {
             connection = dataSource.getConnection();

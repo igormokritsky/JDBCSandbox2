@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class Coach {
-    private Integer id;
+public class Coach extends Entity {
+
     private String name;
     private String awards;
     private Integer country_id;
@@ -51,9 +51,7 @@ public class Coach {
         this.id = id;
     }
 
-    public Integer getId() {
-        return id;
-    }
+
 
     public void setId(Integer id) {
         this.id = id;

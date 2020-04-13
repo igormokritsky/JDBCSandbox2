@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class Country {
-    private Integer id;
+public class Country extends Entity{
+
     private String country_name;
 
     public Country() {
@@ -14,13 +14,8 @@ public class Country {
     }
 
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+
 
     public String getCountry_name() {
         return country_name;

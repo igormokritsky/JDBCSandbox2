@@ -4,10 +4,9 @@ import org.example.DAOException;
 import org.example.ServiceException;
 import org.example.dao.SwimCompetsDao;
 import org.example.entity.SwimCompet;
-import org.example.entity.User;
 import org.example.service.CompetResultService;
-import org.example.transaction.TransactionManager;
-import org.example.transaction.TransactionalOperation;
+import org.example.transaction.impl.TransactionManager;
+import org.example.transaction.impl.*;
 
 public class CompetResultServiceImpl implements CompetResultService {
 
@@ -26,7 +25,7 @@ public class CompetResultServiceImpl implements CompetResultService {
             swimCompet = transactionManager.executeTransaction(new TransactionalOperation<SwimCompet>() {
                 @Override
                 public SwimCompet execute() throws DAOException {
-                    return swimCompetsDao.getSwimCompet(id);
+                    return swimCompetsDao.read(id);
                 }
             });
         } catch (DAOException e) {
@@ -41,7 +40,7 @@ public class CompetResultServiceImpl implements CompetResultService {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return swimCompetsDao.insertSwimCompet(swimCompet);
+                    return swimCompetsDao.create(swimCompet);
                 }
             });
         } catch (DAOException e) {
@@ -56,7 +55,7 @@ public class CompetResultServiceImpl implements CompetResultService {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return swimCompetsDao.deleteSwimCompet(id);
+                    return swimCompetsDao.delete(id);
                 }
             });
         } catch (DAOException e) {

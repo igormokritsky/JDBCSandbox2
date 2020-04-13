@@ -3,12 +3,10 @@ package org.example.service.impl;
 import org.example.DAOException;
 import org.example.dao.UsersDao;
 import org.example.service.UserService;
-import org.example.transaction.TransactionManager;
 import org.example.entity.User;
 import org.example.ServiceException;
-import org.example.transaction.TransactionalOperation;
-
-import java.sql.SQLException;
+import org.example.transaction.impl.TransactionManager;
+import org.example.transaction.impl.*;
 
 
 public class UserServiceImpl implements UserService {
@@ -28,7 +26,7 @@ public class UserServiceImpl implements UserService {
             user = transactionManager.executeTransaction(new TransactionalOperation<User>() {
                 @Override
                 public User execute() throws DAOException {
-                    return usersDao.getUser(id);
+                    return usersDao.read(id);
                 }
             });
         } catch (DAOException e){
@@ -44,7 +42,7 @@ public class UserServiceImpl implements UserService {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return usersDao.insertUser(user);
+                    return usersDao.create(user);
                 }
             });
         } catch (DAOException e) {
@@ -59,7 +57,7 @@ public class UserServiceImpl implements UserService {
             transactionManager.executeTransaction(new TransactionalOperation<Object>() {
                 @Override
                 public Object execute() throws DAOException {
-                    return usersDao.deleteUser(id);
+                    return usersDao.delete(id);
                 }
             });
         } catch (DAOException e) {

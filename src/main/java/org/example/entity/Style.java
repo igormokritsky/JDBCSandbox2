@@ -1,8 +1,7 @@
 package org.example.entity;
 
-public class Style {
+public class Style extends Entity{
 
-    private Integer id;
     private String style_name;
 
     public Style() {
@@ -14,13 +13,7 @@ public class Style {
         this.style_name = style_name;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getStyle_name() {
         return style_name;

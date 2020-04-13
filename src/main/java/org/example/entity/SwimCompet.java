@@ -1,8 +1,7 @@
 package org.example.entity;
 
-public class SwimCompet {
+public class SwimCompet extends Entity {
 
-    private Integer id;
     private Integer competition_id;
     private Integer swimmer_id;
     private Integer time;
@@ -19,13 +18,7 @@ public class SwimCompet {
     }
 
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getCompetition_id() {
         return competition_id;

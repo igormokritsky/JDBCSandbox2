@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class Sponsor {
-    private Integer id;
+public class Sponsor extends Entity {
+
     private String name;
 
     public Sponsor() {
@@ -13,13 +13,6 @@ public class Sponsor {
         this.name = name;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

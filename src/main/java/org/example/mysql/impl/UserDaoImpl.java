@@ -1,6 +1,8 @@
 package org.example.mysql.impl;
 
 
+import org.example.ConnectionHolder;
+import org.example.DAOException;
 import org.example.DBUtils;
 import org.example.ServiceException;
 import org.example.dao.UsersDao;
@@ -11,6 +13,8 @@ import java.sql.SQLException;
 
 public class UserDaoImpl implements UsersDao {
 
+    private static UserDaoImpl userDao;
+
     private static final String insert = "INSERT INTO swimmers" + "(id, username, email, phone, password) VALUES" +
             "(?,?,?,?,?);";
     private static final String update = "UPDATE swimmers SET username=?, email=?, phone=?, password=? WHERE id=?";
@@ -19,11 +23,46 @@ public class UserDaoImpl implements UsersDao {
 
     }
 
-    public User getUser(int id) {
-        Connection connection = DBUtils.getConnection();
+    public UserDaoImpl() {
+    }
+
+    static UsersDao getInstance() {
+        if(userDao == null) userDao = new UserDaoImpl();
+        return userDao;
+    }
+
+    @Override
+    public Integer create(User user) throws DAOException {
+        Connection connection;
+        PreparedStatement preparedStatement = null;
+        try{
+            connection = ConnectionHolder.getConnection();
+            preparedStatement = connection.prepareStatement(insert);
+            connection.setAutoCommit(false);
+
+            preparedStatement.setInt(1,user.getId());
+            preparedStatement.setString(2,user.getUsername());
+            preparedStatement.setString(3,user.getEmail());
+            preparedStatement.setInt(4, user.getPhone());
+            preparedStatement.setString(5, user.getPassword());
+            connection.commit();
+
+
+        } catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
+        }
+        return null;
+    }
+
+    @Override
+    public User read(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         ResultSet resultSet = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM users WHERE id=" + id);
             if(resultSet.next()){
@@ -44,37 +83,12 @@ public class UserDaoImpl implements UsersDao {
         return null;
     }
 
-
-
-    public boolean insertUser(User user){
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean update(User user) throws DAOException {
+        Connection connection;
         PreparedStatement preparedStatement = null;
         try{
-            preparedStatement = connection.prepareStatement(insert);
-            connection.setAutoCommit(false);
-
-            preparedStatement.setInt(1,user.getId());
-            preparedStatement.setString(2,user.getUsername());
-            preparedStatement.setString(3,user.getEmail());
-            preparedStatement.setInt(4, user.getPhone());
-            preparedStatement.setString(5, user.getPassword());
-            connection.commit();
-
-
-        } catch (SQLException e) {
-            throw new ServiceException(e.getMessage(), e);
-        } finally {
-            DBUtils.closeStatement(preparedStatement);
-        }
-        return false;
-    }
-
-
-
-    public boolean updateUser(User user) {
-        Connection connection = DBUtils.getConnection();
-        PreparedStatement preparedStatement = null;
-        try{
+            connection = ConnectionHolder.getConnection();
             preparedStatement = connection.prepareStatement(update);
             preparedStatement.setString(1,user.getUsername());
             preparedStatement.setString(2,user.getEmail());
@@ -95,12 +109,12 @@ public class UserDaoImpl implements UsersDao {
         return false;
     }
 
-
-
-    public boolean deleteUser(int id){
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean delete(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM users WHERE id=" + id);
 
@@ -112,7 +126,6 @@ public class UserDaoImpl implements UsersDao {
         } finally {
             DBUtils.closeStatement(statement);
         }
-
         return false;
     }
 }

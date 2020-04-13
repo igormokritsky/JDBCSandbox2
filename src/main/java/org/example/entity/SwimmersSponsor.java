@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class SwimmersSponsor {
-    private Integer id;
+public class SwimmersSponsor extends Entity {
+
     private Integer swimmer_id;
     private Integer sponsor_id;
     private Integer contract_amount;
@@ -17,13 +17,6 @@ public class SwimmersSponsor {
         this.contract_amount = contract_amount;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getSwimmer_id() {
         return swimmer_id;

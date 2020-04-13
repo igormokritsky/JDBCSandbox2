@@ -1,5 +1,7 @@
 package org.example.mysql.impl;
 
+import org.example.ConnectionHolder;
+import org.example.DAOException;
 import org.example.DBUtils;
 import org.example.ServiceException;
 import org.example.dao.SwimmerSponsorsDao;
@@ -9,6 +11,7 @@ import java.sql.*;
 
 public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
 
+    private static SwimmersSponsorDaoImpl swimmersSponsorDao;
     final private static String insert = "INSERT INTO sponsors" +
             "(id, swimmer_id, sponsor_id, contract_amount) VALUES (?,?,?,?);";
     final private static String update =
@@ -18,11 +21,44 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
 
     }
 
-    public SwimmersSponsor getSwimmerSponsor(int id) {
-        Connection connection = DBUtils.getConnection();
+    public SwimmersSponsorDaoImpl() {
+    }
+
+    static SwimmerSponsorsDao getInstance() {
+        if(swimmersSponsorDao == null) swimmersSponsorDao = new SwimmersSponsorDaoImpl();
+        return swimmersSponsorDao;
+    }
+
+    @Override
+    public Integer create(SwimmersSponsor swimmersSponsor) throws DAOException {
+        Connection connection;
+        PreparedStatement preparedStatement = null;
+        try{
+            connection = ConnectionHolder.getConnection();
+            preparedStatement = connection.prepareStatement(insert);
+            connection.setAutoCommit(false);
+
+            preparedStatement.setInt(1, swimmersSponsor.getId());
+            preparedStatement.setInt(2, swimmersSponsor.getSwimmer_id());
+            preparedStatement.setInt(3, swimmersSponsor.getSponsor_id());
+            preparedStatement.setInt(4, swimmersSponsor.getContract_amount());
+
+            connection.commit();
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
+        }
+        return null;
+    }
+
+    @Override
+    public SwimmersSponsor read(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         ResultSet resultSet = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM swimmers_sponsors WHERE id=" + id);
             connection.setAutoCommit(false);
@@ -45,32 +81,12 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
         return null;
     }
 
-    public boolean insertSwimmerSponsor(SwimmersSponsor swimmersSponsor) {
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean update(SwimmersSponsor swimmersSponsor) throws DAOException {
+        Connection connection;
         PreparedStatement preparedStatement = null;
         try{
-            preparedStatement = connection.prepareStatement(insert);
-            connection.setAutoCommit(false);
-
-            preparedStatement.setInt(1, swimmersSponsor.getId());
-            preparedStatement.setInt(2, swimmersSponsor.getSwimmer_id());
-            preparedStatement.setInt(3, swimmersSponsor.getSponsor_id());
-            preparedStatement.setInt(4, swimmersSponsor.getContract_amount());
-
-            connection.commit();
-        }catch (SQLException e) {
-            throw new ServiceException(e.getMessage(), e);
-        } finally {
-            DBUtils.closeStatement(preparedStatement);
-        }
-        return false;
-    }
-
-
-    public boolean updateSwimmerSponsor(SwimmersSponsor swimmersSponsor) {
-        Connection connection = DBUtils.getConnection();
-        PreparedStatement preparedStatement = null;
-        try{
+            connection = ConnectionHolder.getConnection();
             preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
@@ -92,11 +108,12 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
         return false;
     }
 
-
-    public boolean deleteSwimmerSponsor(int id) {
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean delete(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM swimmers_sponsors WHERE id=" + id);
 
@@ -111,5 +128,4 @@ public class SwimmersSponsorDaoImpl implements SwimmerSponsorsDao {
 
         return false;
     }
-
 }

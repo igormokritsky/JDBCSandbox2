@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class Competition {
-    private Integer id;
+public class Competition extends Entity {
+
     private Integer country_id;
     private Integer style_id;
     private Integer distance;
@@ -17,13 +17,7 @@ public class Competition {
         this.distance = distance;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getCountry_id() {
         return country_id;

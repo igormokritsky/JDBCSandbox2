@@ -5,10 +5,11 @@ import java.util.logging.*;
 
 
 public class DBUtils {
+
+
     private static final String userName = "root";
     private static final String password = "Jummetmokai2145";
     private static final String connectionURL = "jdbc:mysql://localhost:3306/swimmers_schema?useUnicode=true&serverTimezone=UTC";
-
 
 
     public static Connection getConnection(){

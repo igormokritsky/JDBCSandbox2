@@ -1,5 +1,7 @@
 package org.example.mysql.impl;
 
+import org.example.ConnectionHolder;
+import org.example.DAOException;
 import org.example.DBUtils;
 import org.example.ServiceException;
 import org.example.dao.StylesDao;
@@ -9,6 +11,8 @@ import java.sql.*;
 
 public class StyleDaoImpl implements StylesDao {
 
+    private static StyleDaoImpl styleDao;
+
     final private static String insert = "INSERT INTO styles" + "(id, style_name) VALUES (?,?);";
     final private static String update = "UPDATE styles SET style_name=? WHERE id=?";
 
@@ -16,11 +20,43 @@ public class StyleDaoImpl implements StylesDao {
 
     }
 
-    public Style getStyle(int id) {
-        Connection connection = DBUtils.getConnection();
+    public StyleDaoImpl() {
+    }
+
+    static StylesDao getInstance(){
+        if(styleDao == null) styleDao = new StyleDaoImpl();
+        return styleDao;
+    }
+
+    @Override
+    public Integer create(Style style) throws DAOException {
+        Connection connection;
+        PreparedStatement preparedStatement = null;
+        try{
+            connection = ConnectionHolder.getConnection();
+            preparedStatement = connection.prepareStatement(insert);
+            connection.setAutoCommit(false);
+
+            preparedStatement.setInt(1,style.getId());
+            preparedStatement.setString(2,style.getStyle_name());
+
+            connection.commit();
+
+        }catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
+        } finally {
+            DBUtils.closeStatement(preparedStatement);
+        }
+        return null;
+    }
+
+    @Override
+    public Style read(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         ResultSet resultSet = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM styles WHERE id=" + id);
             connection.setAutoCommit(false);
@@ -39,31 +75,12 @@ public class StyleDaoImpl implements StylesDao {
         return null;
     }
 
-
-    public boolean insertStyle(Style style) {
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean update(Style style) throws DAOException {
+        Connection connection;
         PreparedStatement preparedStatement = null;
         try{
-            preparedStatement = connection.prepareStatement(insert);
-            connection.setAutoCommit(false);
-
-            preparedStatement.setInt(1,style.getId());
-            preparedStatement.setString(2,style.getStyle_name());
-
-            connection.commit();
-
-        }catch (SQLException e) {
-            throw new ServiceException(e.getMessage(), e);
-        } finally {
-            DBUtils.closeStatement(preparedStatement);
-        }
-        return false;
-    }
-
-    public boolean updateStyle(Style style) {
-        Connection connection = DBUtils.getConnection();
-        PreparedStatement preparedStatement = null;
-        try{
+            connection = ConnectionHolder.getConnection();
             preparedStatement = connection.prepareStatement(update);
             connection.setAutoCommit(false);
 
@@ -83,10 +100,12 @@ public class StyleDaoImpl implements StylesDao {
         return false;
     }
 
-    public boolean deleteStyle(int id) {
-        Connection connection = DBUtils.getConnection();
+    @Override
+    public boolean delete(Integer id) throws DAOException {
+        Connection connection;
         Statement statement = null;
         try{
+            connection = ConnectionHolder.getConnection();
             statement = connection.createStatement();
             int i = statement.executeUpdate("DELETE FROM styles WHERE id=" + id);
 
@@ -98,7 +117,6 @@ public class StyleDaoImpl implements StylesDao {
         } finally {
             DBUtils.closeStatement(statement);
         }
-
         return false;
     }
 }

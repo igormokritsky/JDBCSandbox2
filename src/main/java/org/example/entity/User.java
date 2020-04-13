@@ -1,7 +1,7 @@
 package org.example.entity;
 
-public class User {
-    private Integer id;
+public class User extends Entity {
+
     private String username;
     private String email;
     private Integer phone;
@@ -36,13 +36,7 @@ public class User {
         this.password = password;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

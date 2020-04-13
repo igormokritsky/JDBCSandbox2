@@ -5,8 +5,8 @@ import org.example.dao.CoachesDao;
 import org.example.dao.SwimmersDao;
 import org.example.entity.SwimmersSponsor;
 import org.example.service.CoachesWorkService;
-import org.example.transaction.TransactionManager;
-import org.example.transaction.TransactionalOperation;
+import org.example.transaction.impl.TransactionManager;
+import org.example.transaction.impl.*;
 
 public class CoachesWorkServiceImpl implements CoachesWorkService {
 
@@ -26,8 +26,8 @@ public class CoachesWorkServiceImpl implements CoachesWorkService {
             transactionManager.executeTransaction(new TransactionalOperation<SwimmersSponsor>() {
                 @Override
                 public SwimmersSponsor execute() throws DAOException {
-                    coachesDao.getCoach(id);
-                    swimmersDao.getSwimmer(id);
+                    coachesDao.read(id);
+                    swimmersDao.read(id);
                     return null;
                 }
             });

@@ -5,8 +5,8 @@ import org.example.ServiceException;
 import org.example.dao.SwimmerSponsorsDao;
 import org.example.entity.SwimmersSponsor;
 import org.example.service.SponsorService;
-import org.example.transaction.TransactionManager;
-import org.example.transaction.TransactionalOperation;
+import org.example.transaction.impl.TransactionManager;
+import org.example.transaction.impl.*;
 
 public class SponsorServiceImpl implements SponsorService {
 
@@ -28,7 +28,7 @@ public class SponsorServiceImpl implements SponsorService {
             return transactionManager.executeTransaction(new TransactionalOperation<SwimmersSponsor>() {
                 @Override
                 public SwimmersSponsor execute() throws DAOException {
-                     return swimmerSponsorsDao.getSwimmerSponsor(id);
+                     return swimmerSponsorsDao.read(id);
                 }
             });
         } catch (DAOException e) {

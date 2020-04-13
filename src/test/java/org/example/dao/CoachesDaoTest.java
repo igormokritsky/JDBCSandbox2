@@ -1,5 +1,7 @@
 package org.example.dao;
 
+import org.example.ConnectionHolder;
+import org.example.DAOException;
 import org.example.DBUtils;
 import org.example.ServiceException;
 import org.example.mysql.impl.CoachDaoImpl;
@@ -24,11 +26,12 @@ public class CoachesDaoTest {
     private PreparedStatement preparedStatement;
     private Statement statement;
     private ResultSet resultSet;
+    private ConnectionHolder connectionHolder;
 
 
     @Before
     public void setUp() throws Exception {
-        connection = DBUtils.getConnection();
+        connection = ConnectionHolder.getConnection();
     }
 
     @After
@@ -38,13 +41,13 @@ public class CoachesDaoTest {
 
 
     @Test
-    public void testGetCoach() {
+    public void testGetCoach() throws DAOException {
         coachDaoImpl = new CoachDaoImpl(connection);
-        coachDaoImpl.getCoach(1);
+        coachDaoImpl.read(1);
     }
 
     @Test
-    public void testInsertCoach() {
+    public void testInsertCoach() throws DAOException {
         coachDaoImpl = new CoachDaoImpl(connection);
         Coach coach = new Coach();
         coach.setId(5);
@@ -53,32 +56,32 @@ public class CoachesDaoTest {
         coach.setCountry_id(1);
         coach.setUser_id(1);
 
-        coachDaoImpl.insertCoach(coach);
-        assertNotNull("we added someone", coachDaoImpl.getCoach(5));
+        coachDaoImpl.create(coach);
+        assertNotNull("we added someone", coachDaoImpl.read(5));
     }
 
     @Test
-    public void testUpdateCoach() {
+    public void testUpdateCoach() throws DAOException {
         coachDaoImpl = new CoachDaoImpl(connection);
-        coachDaoImpl.getCoach(1);
+        coachDaoImpl.read(1);
 
         Coach coach = new Coach();
         coach.setName("Ragucci");
         coach.setAwards("Best in 2009");
         coach.setId(1);
 
-        coachDaoImpl.updateCoach(coach);
-        assertEquals(coachDaoImpl.getCoach(1).getId(), coach.getId());
-        assertEquals(coachDaoImpl.getCoach(1).getName(), coach.getName());
-        assertEquals(coachDaoImpl.getCoach(1).getAwards(), coach.getAwards());
+        coachDaoImpl.update(coach);
+        assertEquals(coachDaoImpl.read(1).getId(), coach.getId());
+        assertEquals(coachDaoImpl.read(1).getName(), coach.getName());
+        assertEquals(coachDaoImpl.read(1).getAwards(), coach.getAwards());
     }
 
     @Test
-    public void testDeleteCoach() {
+    public void testDeleteCoach() throws DAOException {
         coachDaoImpl = new CoachDaoImpl(connection);
-        coachDaoImpl.getCoach(5);
+        coachDaoImpl.read(5);
 
-        coachDaoImpl.deleteCoach(5);
-        assertNull("we don't have this coach",coachDaoImpl.getCoach(5));
+        coachDaoImpl.delete(5);
+        assertNull("we don't have this coach",coachDaoImpl.read(5));
     }
 }
